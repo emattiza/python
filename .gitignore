@@ -9,3 +9,4 @@ dist/*
 *.so
 *.dylib
 .DS_Store
+result
