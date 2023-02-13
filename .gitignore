@@ -10,3 +10,4 @@ dist/*
 *.dylib
 .DS_Store
 result
+.direnv/

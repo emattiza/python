@@ -1,5 +1,9 @@
 {
   pkgs,
+  cmake,
+  ninja,
+  pkgconfig,
+  pdal,
   buildPythonPackage,
   scikit-build,
   pybind11,
@@ -14,7 +18,7 @@ buildPythonPackage rec {
   pname = "pdal-python";
   version = "3.2.2";
   dontUseCmakeConfigure = true;
-  nativeBuildInputs = with pkgs; [
+  nativeBuildInputs = [
     cmake
     ninja
     pkgconfig
@@ -23,9 +27,9 @@ buildPythonPackage rec {
   ];
   checkInputs = [pytest];
   checkPhase = ''
-    PYTHONPATH=$out/${python.sitePackages}:$PYTHONPATH pytest test/
+    PYTHONPATH=$out/${python.sitePackages}:$PYTHONPATH ${pytest}/bin/pytest test/
   '';
-  propagatedBuildInputs = [numpy pkgs.pdal] ++ passthru.optional-dependencies.meshio;
+  propagatedBuildInputs = [numpy pdal] ++ passthru.optional-dependencies.meshio;
   passthru.optional-dependencies = {
     meshio = [meshio];
   };

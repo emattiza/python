@@ -1,4 +1,4 @@
-let
-  package = import ./default.nix;
+{pkgs ? import <nixpkgs> {}, ...}: let
+  package = pkgs.callPackage ./default.nix {};
 in
   package.env
