@@ -25,7 +25,7 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         python-version: ['3.9', '3.10', '3.11']
-        
+
     steps:
     - name: Check out python-pdal
       uses: actions/checkout@v2
@@ -37,8 +37,12 @@ jobs:
         path: ./plugins
 
     - name: Setup micromamba
-      uses: mamba-org/provision-with-micromamba@main
+      uses: conda-incubator/setup-miniconda@v2
       with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        use-mamba: true
+        auto-update-conda: true
         environment-file: .github/environment.yml
         extra-specs: |
           python=${{ matrix.python-version }}
@@ -50,18 +54,11 @@ jobs:
       working-directory: ./plugins
       run: pip install .
 
-    - name: Install pytest
-      run: pip install --upgrade --force-reinstall pytest
-
     - name: Test
       run: |
         export PDAL_DRIVER_PATH=$(python -c "import os, skbuild; print(os.path.join('plugins', skbuild.constants.SKBUILD_DIR(), 'cmake-build'))")
         pdal --drivers
         py.test -v test/
-
-    - name: Build wheel distribution
-      if: matrix.os != 'ubuntu-latest'
-      run: python setup.py --skip-cmake bdist_wheel
 
     - name: Build source distribution
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
